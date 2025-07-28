@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            margin: 50px auto;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .plot-container {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+        .plot-container h2 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .plot-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.1em;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Data Analysis Results</h1>
+
+        {% if email_sent_message %}
+            <p style="text-align: center; color: green;">{{ email_sent_message }}</p>
+        {% endif %}
+
+        {% if plots %}
+            {% for plot in plots %}
+                <div class="plot-container">
+                    <h2>{{ plot.title }}</h2>
+                    <img src="data:image/png;base64,{{ plot.image }}" alt="{{ plot.title }}">
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No plots generated. Please check your CSV file and try again.</p>
+        {% endif %}
+
+        <a href="{% url 'analyzer_app:upload_csv' %}" class="back-link">Upload another CSV</a>
+    </div>
+</body>
+</html>
