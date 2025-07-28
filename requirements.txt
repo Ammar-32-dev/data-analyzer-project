@@ -1,6 +1,7 @@
+gunicorn
 Django
 pandas
 matplotlib
 seaborn
 scikit-learn
-gunicorn
+
