@@ -40,6 +40,8 @@
         .plot-container img {
             max-width: 100%;
             height: auto;
+            display: block; /* Ensures image takes up full width and removes extra space below */
+            margin: 0 auto; /* Center the image */
             border: 1px solid #eee;
             border-radius: 4px;
         }
@@ -72,10 +74,10 @@
                 </div>
             {% endfor %}
         {% else %}
-            <p>No plots generated. Please check your CSV file and try again.</p>
+            <p>No plots generated. Please check your file and try again.</p>
         {% endif %}
 
-        <a href="{% url 'analyzer_app:upload_csv' %}" class="back-link">Upload another CSV</a>
+        <a href="{% url 'analyzer_app:upload_file' %}" class="back-link">Upload another file</a>
     </div>
 </body>
 </html>

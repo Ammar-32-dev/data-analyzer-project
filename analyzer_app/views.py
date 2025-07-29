@@ -1,53 +1,71 @@
 from django.shortcuts import render, redirect
-from .forms import CSVUploadForm
+from .forms import DataUploadForm
 from .data_analyzer import DataAnalyzer
+import chardet
+import csv
 from .utils import send_analysis_email
 import pandas as pd
 import io
+import logging
 
-def upload_csv(request):
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def upload_file(request):
     if request.method == 'POST':
-        form = CSVUploadForm(request.POST, request.FILES)
+        form = DataUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            csv_file = request.FILES['csv_file']
-            # Read the CSV file into a pandas DataFrame
+            uploaded_file = request.FILES['data_file']
+            file_type = form.cleaned_data['file_type']
+            df = None
+            error_message = None
+
             try:
-                # Try reading with utf-8 first
-                csv_data = csv_file.read().decode('utf-8')
-                df = pd.read_csv(io.StringIO(csv_data))
-            except UnicodeDecodeError:
-                try:
-                    # If utf-8 fails, try ISO-8859-1
-                    csv_data = csv_file.read().decode('ISO-8859-1')
-                    df = pd.read_csv(io.StringIO(csv_data))
-                except Exception as e:
-                    return render(request, 'analyzer_app/index.html', {'form': form, 'error_message': f'Error reading CSV: {e}'})
+                if file_type == 'csv':
+                    # Read a sample to detect encoding and delimiter
+                    raw_data = uploaded_file.read()
+                    result = chardet.detect(raw_data)
+                    encoding = result['encoding'] if result['encoding'] else 'utf-8'
+                    
+                    # Try to detect delimiter
+                    try:
+                        sample = raw_data.decode(encoding).splitlines(True)[:5]
+                        dialect = csv.Sniffer().sniff(''.join(sample))
+                        delimiter = dialect.delimiter
+                    except csv.Error:
+                        delimiter = ',' # Default to comma if sniffing fails
+
+                    df = pd.read_csv(io.StringIO(raw_data.decode(encoding)), sep=delimiter)
+                elif file_type == 'excel':
+                    df = pd.read_excel(uploaded_file)
+                
+                # Save the DataFrame to a temporary file for DataAnalyzer
+                temp_file_path = 'temp_upload.csv' if file_type == 'csv' else 'temp_upload.xlsx'
+                if file_type == 'csv':
+                    df.to_csv(temp_file_path, index=False)
+                else:
+                    df.to_excel(temp_file_path, index=False)
+
+                analyzer = DataAnalyzer(temp_file_path)
+                plots = analyzer.run_analysis()
+
+                # Clean up the temporary file
+                import os
+                os.remove(temp_file_path)
+
+                email_sent_message = None
+                recipient_email = form.cleaned_data.get('recipient_email')
+                if recipient_email:
+                    try:
+                        send_analysis_email(recipient_email, "Data Analysis Visualizations", "Please find attached the data analysis visualizations.", plots)
+                        email_sent_message = f"Analysis results sent to {recipient_email}"
+                    except Exception as e:
+                        email_sent_message = f"Failed to send email: {e}"
+
+                return render(request, 'analyzer_app/results.html', {'plots': plots, 'email_sent_message': email_sent_message})
+
             except Exception as e:
-                return render(request, 'analyzer_app/index.html', {'form': form, 'error_message': f'Error reading CSV: {e}'})
-
-            # Save the DataFrame to a temporary CSV file for DataAnalyzer
-            # In a real application, you might want to handle this more robustly
-            # For simplicity, we'll write it to a temp file.
-            temp_csv_path = 'temp_upload.csv'
-            df.to_csv(temp_csv_path, index=False)
-
-            analyzer = DataAnalyzer(temp_csv_path)
-            plots = analyzer.run_analysis()
-
-            # Clean up the temporary file
-            import os
-            os.remove(temp_csv_path)
-
-            email_sent_message = None
-            recipient_email = form.cleaned_data.get('recipient_email')
-            if recipient_email:
-                try:
-                    send_analysis_email(recipient_email, "Data Analysis Visualizations", "Please find attached the data analysis visualizations.", plots)
-                    email_sent_message = f"Analysis results sent to {recipient_email}"
-                except Exception as e:
-                    email_sent_message = f"Failed to send email: {e}"
-
-            return render(request, 'analyzer_app/results.html', {'plots': plots, 'email_sent_message': email_sent_message})
+                error_message = f"Error processing file: {e}"
+                return render(request, 'analyzer_app/index.html', {'form': form, 'error_message': error_message})
     else:
-        form = CSVUploadForm()
+        form = DataUploadForm()
     return render(request, 'analyzer_app/index.html', {'form': form})
