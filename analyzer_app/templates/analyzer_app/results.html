@@ -16,13 +16,12 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
+            max-width: 1200px;
             margin: 50px auto;
         }
-        h1 {
+        h1, h2, h3 {
             color: #0056b3;
             text-align: center;
-            margin-bottom: 30px;
         }
         .plot-container {
             margin-bottom: 30px;
@@ -40,10 +39,40 @@
         .plot-container img {
             max-width: 100%;
             height: auto;
-            display: block; /* Ensures image takes up full width and removes extra space below */
-            margin: 0 auto; /* Center the image */
+            display: block;
+            margin: 0 auto;
             border: 1px solid #eee;
             border-radius: 4px;
+        }
+        .summary-container {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .summary-container h3 {
+            cursor: pointer;
+            color: #007bff;
+        }
+        .summary-content {
+            display: none;
+        }
+        .summary-content pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .summary-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .summary-content th, .summary-content td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
         }
         .back-link {
             display: block;
@@ -66,7 +95,34 @@
             <p style="text-align: center; color: green;">{{ email_sent_message }}</p>
         {% endif %}
 
+        {% if summaries %}
+            <div class="summary-container">
+                <h3 onclick="toggleSummary('initial-summary')">Initial Data Summary (Click to expand)</h3>
+                <div id="initial-summary" class="summary-content">
+                    <h4>Data Info</h4>
+                    <pre>{{ summaries.initial.data_info }}</pre>
+                    <h4>Missing Values</h4>
+                    <div>{{ summaries.initial.missing_values|safe }}</div>
+                    <h4>Descriptive Statistics</h4>
+                    <div>{{ summaries.initial.descriptive_statistics|safe }}</div>
+                </div>
+            </div>
+
+            <div class="summary-container">
+                <h3 onclick="toggleSummary('final-summary')">Final Data Summary (After Cleaning) (Click to expand)</h3>
+                <div id="final-summary" class="summary-content">
+                    <h4>Data Info</h4>
+                    <pre>{{ summaries.final.data_info }}</pre>
+                    <h4>Missing Values</h4>
+                    <div>{{ summaries.final.missing_values|safe }}</div>
+                    <h4>Descriptive Statistics</h4>
+                    <div>{{ summaries.final.descriptive_statistics|safe }}</div>
+                </div>
+            </div>
+        {% endif %}
+
         {% if plots %}
+            <h2>Visualizations</h2>
             {% for plot in plots %}
                 <div class="plot-container">
                     <h2>{{ plot.title }}</h2>
@@ -79,5 +135,16 @@
 
         <a href="{% url 'analyzer_app:upload_file' %}" class="back-link">Upload another file</a>
     </div>
+
+    <script>
+        function toggleSummary(id) {
+            var content = document.getElementById(id);
+            if (content.style.display === "none") {
+                content.style.display = "block";
+            } else {
+                content.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>

@@ -41,14 +41,21 @@ class DataAnalyzer:
             raise
 
     def summarize_data(self):
-        """Provides a comprehensive summary of the dataframe."""
-        print(f"\n--- Summary for {self.file_path} ---")
-        print("\nData Info:")
-        self.df.info()
-        print("\nMissing Values:")
-        print(self.df.isnull().sum())
-        print("\nDescriptive Statistics:")
-        print(self.df.describe())
+        """Provides a comprehensive summary of the dataframe and returns it as a dictionary."""
+        summaries = {}
+
+        # Data Info
+        buf = io.StringIO()
+        self.df.info(buf=buf)
+        summaries['data_info'] = buf.getvalue()
+
+        # Missing Values
+        summaries['missing_values'] = self.df.isnull().sum().to_frame('count').to_html()
+
+        # Descriptive Statistics
+        summaries['descriptive_statistics'] = self.df.describe().to_html()
+
+        return summaries
 
     def handle_missing_values(self, drop_threshold=0.7):
         """
@@ -210,7 +217,7 @@ class DataAnalyzer:
                 buf = io.BytesIO()
                 plt.savefig(buf, format='png')
                 buf.seek(0)
-                plots.append({'title': f'Distribution of {col.replace('_', ' ').title()}', 'image': base664.b64encode(buf.getvalue()).decode('utf-8')})
+                plots.append({'title': f'Distribution of {col.replace('_', ' ').title()}', 'image': base64.b64encode(buf.getvalue()).decode('utf-8')})
                 plt.close()
                 logging.info(f"Generated histogram for {col}")
             except Exception as e:
@@ -307,13 +314,12 @@ class DataAnalyzer:
 
     def run_analysis(self):
         """Runs the full data cleaning and analysis pipeline."""
-        self.summarize_data()
+        initial_summary = self.summarize_data()
         self.handle_missing_values()
         self.convert_datatypes()
         self.handle_outliers()
         self.encode_categoricals()
-        self.summarize_data() # Summarize again after cleaning
+        final_summary = self.summarize_data() # Summarize again after cleaning
         plots = self.generate_visualizations()
         print(f"\nAnalysis complete.")
-        return plots
-
+        return plots, {'initial': initial_summary, 'final': final_summary}

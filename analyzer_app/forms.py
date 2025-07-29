@@ -8,3 +8,8 @@ class DataUploadForm(forms.Form):
         widget=forms.RadioSelect,
         label="File Type"
     )
+    recipient_email = forms.EmailField(
+        required=False,
+        label="Recipient Email (Optional)",
+        help_text="If you want the results emailed to you, enter your email address here."
+    )

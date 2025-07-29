@@ -38,19 +38,8 @@ def upload_file(request):
                 elif file_type == 'excel':
                     df = pd.read_excel(uploaded_file)
                 
-                # Save the DataFrame to a temporary file for DataAnalyzer
-                temp_file_path = 'temp_upload.csv' if file_type == 'csv' else 'temp_upload.xlsx'
-                if file_type == 'csv':
-                    df.to_csv(temp_file_path, index=False)
-                else:
-                    df.to_excel(temp_file_path, index=False)
-
-                analyzer = DataAnalyzer(temp_file_path)
-                plots = analyzer.run_analysis()
-
-                # Clean up the temporary file
-                import os
-                os.remove(temp_file_path)
+                analyzer = DataAnalyzer(df=df)
+                plots, summaries = analyzer.run_analysis()
 
                 email_sent_message = None
                 recipient_email = form.cleaned_data.get('recipient_email')
@@ -61,7 +50,7 @@ def upload_file(request):
                     except Exception as e:
                         email_sent_message = f"Failed to send email: {e}"
 
-                return render(request, 'analyzer_app/results.html', {'plots': plots, 'email_sent_message': email_sent_message})
+                return render(request, 'analyzer_app/results.html', {'plots': plots, 'summaries': summaries, 'email_sent_message': email_sent_message})
 
             except Exception as e:
                 error_message = f"Error processing file: {e}"
