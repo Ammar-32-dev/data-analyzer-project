@@ -85,11 +85,32 @@
         .back-link:hover {
             text-decoration: underline;
         }
+        .download-button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid #0056b3;
+        }
+        .download-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Data Analysis Results</h1>
+
+        <!-- Download All Section -->
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2>Download All Data</h2>
+            <a href="{% url 'analyzer_app:download_all_plots' %}" class="download-button">Download All Plots (ZIP)</a>
+            <a href="{% url 'analyzer_app:download_data' 'original' %}" class="download-button">Download Original Data (CSV)</a>
+            <a href="{% url 'analyzer_app:download_data' 'processed' %}" class="download-button">Download Processed Data (CSV)</a>
+        </div>
 
         {% if email_sent_message %}
             <p style="text-align: center; color: green;">{{ email_sent_message }}</p>
@@ -105,6 +126,9 @@
                     <div>{{ summaries.initial.missing_values|safe }}</div>
                     <h4>Descriptive Statistics</h4>
                     <div>{{ summaries.initial.descriptive_statistics|safe }}</div>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="{% url 'analyzer_app:download_summary' 'initial' %}" class="download-button">Download Initial Summary</a>
+                    </div>
                 </div>
             </div>
 
@@ -117,6 +141,9 @@
                     <div>{{ summaries.final.missing_values|safe }}</div>
                     <h4>Descriptive Statistics</h4>
                     <div>{{ summaries.final.descriptive_statistics|safe }}</div>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="{% url 'analyzer_app:download_summary' 'final' %}" class="download-button">Download Final Summary</a>
+                    </div>
                 </div>
             </div>
         {% endif %}
@@ -127,6 +154,9 @@
                 <div class="plot-container">
                     <h2>{{ plot.title }}</h2>
                     <img src="data:image/png;base64,{{ plot.image }}" alt="{{ plot.title }}">
+                    <div style="margin-top: 15px;">
+                        <a href="{% url 'analyzer_app:download_plot' forloop.counter0 %}" class="download-button">Download Plot</a>
+                    </div>
                 </div>
             {% endfor %}
         {% else %}
