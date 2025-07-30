@@ -3,70 +3,494 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Analyzer</title>
+    <title>Smart Data Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+            color: #1f2937;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
             max-width: 600px;
-            margin: 50px auto;
-            text-align: center;
+            margin: 20px;
         }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
         h1 {
-            color: #0056b3;
+            color: #2563eb;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: #64748b;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .step {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #f1f5f9;
+            position: relative;
+            padding-left: 60px;
+        }
+
+        .step-number {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            width: 32px;
+            height: 32px;
+            background-color: #2563eb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .step-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+
+        .form-group {
             margin-bottom: 20px;
         }
-        form {
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .help-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-color: #94a3b8;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 16px;
+            font-size: 12px;
+            margin-left: 5px;
+            cursor: help;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #1f2937;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
-        input[type="file"] {
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
+            justify-content: center;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
         }
-        button:hover {
-            background-color: #0056b3;
+
+        .file-upload-wrapper:hover {
+            border-color: #2563eb;
+            background-color: #eff6ff;
         }
+
+        .file-upload-wrapper.dragover {
+            border-color: #2563eb;
+            background-color: #dbeafe;
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            color: #94a3b8;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-text {
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #2563eb;
+            font-weight: 500;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .radio-option:hover {
+            background-color: #e0f2fe;
+        }
+
+        .radio-option input {
+            margin-right: 8px;
+            accent-color: #2563eb;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #2563eb, #38bdf8);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -2px rgba(37, 99, 235, 0.2);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.3), 0 4px 6px -2px rgba(37, 99, 235, 0.2);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         .error-message {
-            color: red;
-            margin-top: 15px;
+            color: #dc2626;
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .step {
+                padding: 15px;
+                padding-left: 50px;
+            }
+
+            .step-number {
+                width: 28px;
+                height: 28px;
+                font-size: 0.9rem;
+            }
+
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .radio-option {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 1.7rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
+
+            .step {
+                padding: 12px;
+                padding-left: 45px;
+            }
+
+            .step-title {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Upload CSV for Analysis</h1>
-        {% if error_message %}
-            <p class="error-message">{{ error_message }}</p>
-        {% endif %}
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Analyze Data</button>
-        </form>
+    <div class="main-content">
+        <div class="container">
+            <header>
+                <h1>Smart Data Analyzer</h1>
+                <p class="tagline">Turn your raw data into clear insights instantly.</p>
+            </header>
+
+            {% if error_message %}
+                <div class="error-message">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" id="uploadForm">
+                {% csrf_token %}
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Upload File</div>
+                    <div class="form-group">
+                        <div class="file-upload-wrapper" id="dropZone">
+                            <div class="file-upload-icon">📁</div>
+                            <p class="file-upload-text">Drag & drop your file here or click to browse</p>
+                            <p class="help-text">Supports CSV and Excel files</p>
+                            <input type="file" name="data_file" class="file-upload-input" id="fileInput" required>
+                            <div class="file-name" id="fileName"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Select File Type</div>
+                    <div class="form-group">
+                        <label for="id_file_type">
+                            File Type
+                            <div class="tooltip">
+                                <span class="help-icon">?</span>
+                                <span class="tooltiptext">Select the format of your data file</span>
+                            </div>
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="file_type" value="csv" checked>
+                                CSV
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="file_type" value="excel">
+                                Excel
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Optional Email</div>
+                    <div class="form-group">
+                        <label for="id_recipient_email">
+                            Recipient Email (Optional)
+                            <div class="tooltip">
+                                <span class="help-icon">?</span>
+                                <span class="tooltiptext">Enter your email to receive results</span>
+                            </div>
+                        </label>
+                        <input type="email" name="recipient_email" id="id_recipient_email" placeholder="you@example.com">
+                        <p class="help-text">If you want the results emailed to you, enter your email address here.</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span class="btn-text">Analyze Data</span>
+                    <div class="spinner" id="spinner"></div>
+                </button>
+            </form>
+        </div>
     </div>
+
+    <footer>
+        <p>Built with ❤️ by Data Insights Team | Powered by Django</p>
+    </footer>
+
+    <script>
+        // File upload handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const submitBtn = document.getElementById('submitBtn');
+        const spinner = document.getElementById('spinner');
+        const btnText = document.querySelector('.btn-text');
+
+        // Click on drop zone to trigger file input
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // File input change
+        fileInput.addEventListener('change', function() {
+            if (this.files.length) {
+                fileName.textContent = this.files[0].name;
+            } else {
+                fileName.textContent = '';
+            }
+        });
+
+        // Drag and drop events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                fileName.textContent = e.dataTransfer.files[0].name;
+            }
+        });
+
+        // Form submission with loading spinner
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+        });
+    </script>
 </body>
 </html>
