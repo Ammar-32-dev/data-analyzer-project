@@ -3,178 +3,796 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analysis Results</title>
+    <title>Analysis Results - DataCore Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=SF+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --color-primary-50: #E6F0FF;
+            --color-primary-100: #CCE0FF;
+            --color-primary-500: #0066FF;
+            --color-primary-600: #0052CC;
+            --color-primary-900: #003D99;
+            --color-neutral-50: #FAFAFA;
+            --color-neutral-100: #F5F5F5;
+            --color-neutral-200: #E5E5E5;
+            --color-neutral-500: #A3A3A3;
+            --color-neutral-700: #404040;
+            --color-neutral-900: #171717;
+            --color-success-500: #10B981;
+            --color-error-500: #EF4444;
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            --spacing-1: 8px;
+            --spacing-2: 16px;
+            --spacing-3: 24px;
+            --spacing-4: 32px;
+            --spacing-6: 48px;
+            --spacing-8: 64px;
+            --spacing-12: 96px;
+            --spacing-16: 128px;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            --shadow-card-hover: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+            --duration-fast: 200ms;
+            --duration-normal: 250ms;
+            --duration-slow: 300ms;
+            --easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
+            font-family: var(--font-primary);
+            background-color: var(--color-neutral-50);
+            color: var(--color-neutral-900);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            max-width: 1200px;
-            margin: 50px auto;
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 72px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--color-neutral-200);
+            z-index: 50;
+            transition: box-shadow var(--duration-normal) var(--easing-default);
         }
-        h1, h2, h3 {
-            color: #0056b3;
-            text-align: center;
-        }
-        .plot-container {
-            margin-bottom: 30px;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            text-align: center;
-        }
-        .plot-container h2 {
-            color: #007bff;
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-        .plot-container img {
-            max-width: 100%;
-            height: auto;
-            display: block;
+
+        .nav-container {
+            max-width: 1400px;
             margin: 0 auto;
-            border: 1px solid #eee;
-            border-radius: 4px;
+            padding: 0 var(--spacing-6);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        .summary-container {
-            margin-bottom: 30px;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
+
+        .nav-logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--color-neutral-900);
+            text-decoration: none;
         }
-        .summary-container h3 {
+
+        .nav-cta {
+            padding: 12px 32px;
+            background: var(--color-primary-500);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            font-family: var(--font-primary);
             cursor: pointer;
-            color: #007bff;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            transition: all var(--duration-fast) var(--easing-default);
         }
+
+        .nav-cta:hover {
+            background: var(--color-primary-600);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        /* Main Dashboard */
+        .main-content {
+            padding-top: 72px;
+            min-height: 100vh;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            background: white;
+            border-bottom: 1px solid var(--color-neutral-200);
+            padding: var(--spacing-6) 0;
+            position: sticky;
+            top: 72px;
+            z-index: 40;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-6);
+        }
+
+        .dashboard-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--color-neutral-900);
+            margin-bottom: var(--spacing-4);
+            text-align: center;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: var(--spacing-3);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .download-button {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            padding: 12px 24px;
+            background: white;
+            color: var(--color-neutral-700);
+            text-decoration: none;
+            border: 1px solid var(--color-neutral-200);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 500;
+            font-family: var(--font-primary);
+            transition: all var(--duration-fast) var(--easing-default);
+            cursor: pointer;
+        }
+
+        .download-button:hover {
+            background: var(--color-neutral-50);
+            border-color: var(--color-primary-500);
+            color: var(--color-primary-600);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .download-icon {
+            width: 20px;
+            height: 20px;
+        }
+        /* Email Alert */
+        .email-alert {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--color-success-500);
+            border-left: 4px solid var(--color-success-500);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-3);
+            margin: var(--spacing-6) auto;
+            max-width: 1400px;
+            text-align: center;
+            color: var(--color-success-500);
+            font-weight: 500;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: var(--spacing-8) var(--spacing-6);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Summary Sections */
+        .summary-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-6);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            transition: box-shadow var(--duration-normal) var(--easing-default);
+        }
+
+        .summary-container:hover {
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .summary-header {
+            padding: var(--spacing-4) var(--spacing-6);
+            background: var(--color-neutral-100);
+            border-bottom: 1px solid var(--color-neutral-200);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color var(--duration-fast) var(--easing-default);
+        }
+
+        .summary-header:hover {
+            background: var(--color-neutral-200);
+        }
+
+        .summary-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--color-neutral-900);
+        }
+
+        .summary-icon {
+            width: 24px;
+            height: 24px;
+            transition: transform var(--duration-normal) var(--easing-default);
+        }
+
+        .summary-container.expanded .summary-icon {
+            transform: rotate(180deg);
+        }
+
         .summary-content {
-            display: none;
+            padding: var(--spacing-6);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--duration-slow) var(--easing-default);
         }
+
+        .summary-content.expanded {
+            max-height: 5000px;
+        }
+
+        .summary-section {
+            margin-bottom: var(--spacing-4);
+        }
+
+        .summary-section h4 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-neutral-900);
+            margin-bottom: var(--spacing-2);
+        }
+
         .summary-content pre {
+            font-family: var(--font-mono);
+            font-size: 14px;
             white-space: pre-wrap;
             word-wrap: break-word;
-            background-color: #eee;
-            padding: 10px;
-            border-radius: 4px;
+            background: var(--color-neutral-50);
+            padding: var(--spacing-3);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-neutral-200);
+            overflow-x: auto;
         }
+
         .summary-content table {
             width: 100%;
             border-collapse: collapse;
+            font-family: var(--font-mono);
+            font-size: 14px;
         }
-        .summary-content th, .summary-content td {
-            border: 1px solid #ddd;
-            padding: 8px;
+
+        .summary-content th,
+        .summary-content td {
+            border: 1px solid var(--color-neutral-200);
+            padding: var(--spacing-2);
             text-align: left;
         }
-        .back-link {
-            display: block;
+
+        .summary-content th {
+            background: var(--color-neutral-100);
+            font-weight: 600;
+            color: var(--color-neutral-900);
+        }
+
+        .summary-content tr:nth-child(even) {
+            background: var(--color-neutral-50);
+        }
+        /* Visualizations Section */
+        .visualizations-section {
+            background: white;
+        }
+
+        .visualizations-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--color-neutral-900);
             text-align: center;
-            margin-top: 30px;
-            font-size: 1.1em;
-            color: #007bff;
-            text-decoration: none;
+            margin-bottom: var(--spacing-8);
         }
-        .back-link:hover {
-            text-decoration: underline;
+
+        .visualizations-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-6);
         }
-        .download-button {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px 20px;
-            background-color: #007bff;
+
+        .plot-container {
+            background: var(--color-neutral-100);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-6);
+            box-shadow: var(--shadow-card);
+            transition: all var(--duration-normal) var(--easing-default);
+            border: 1px solid var(--color-neutral-200);
+        }
+
+        .plot-container:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .plot-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--color-neutral-900);
+            margin-bottom: var(--spacing-4);
+            text-align: center;
+        }
+
+        .plot-image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-neutral-200);
+            background: white;
+            padding: var(--spacing-2);
+        }
+
+        .plot-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: var(--radius-sm);
+            transition: transform var(--duration-normal) var(--easing-default);
+        }
+
+        .plot-image:hover {
+            transform: scale(1.02);
+        }
+
+        .plot-download {
+            display: flex;
+            justify-content: center;
+            margin-top: var(--spacing-4);
+        }
+
+        /* Back Link */
+        .back-section {
+            text-align: center;
+            padding: var(--spacing-8) var(--spacing-6);
+            background: white;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            padding: 16px 32px;
+            background: var(--color-primary-500);
             color: white;
             text-decoration: none;
-            border-radius: 4px;
-            border: 1px solid #0056b3;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            font-family: var(--font-primary);
+            transition: all var(--duration-fast) var(--easing-default);
         }
-        .download-button:hover {
-            background-color: #0056b3;
+
+        .back-link:hover {
+            background: var(--color-primary-600);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .back-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-12) var(--spacing-6);
+            color: var(--color-neutral-700);
+            font-size: 18px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .visualizations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 var(--spacing-4);
+            }
+
+            .nav-logo {
+                font-size: 24px;
+            }
+
+            .nav-cta {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .dashboard-title {
+                font-size: 32px;
+            }
+
+            .visualizations-title {
+                font-size: 32px;
+            }
+
+            .plot-title {
+                font-size: 24px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .download-button {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard-container {
+                padding: 0 var(--spacing-4);
+            }
+
+            .content-section {
+                padding: var(--spacing-6) var(--spacing-4);
+            }
+
+            .summary-header {
+                padding: var(--spacing-3) var(--spacing-4);
+            }
+
+            .summary-title {
+                font-size: 24px;
+            }
+
+            .summary-content {
+                padding: var(--spacing-4);
+            }
+
+            .plot-container {
+                padding: var(--spacing-4);
+            }
+
+            .back-section {
+                padding: var(--spacing-6) var(--spacing-4);
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Focus styles */
+        .download-button:focus,
+        .back-link:focus,
+        .nav-cta:focus {
+            outline: 2px solid var(--color-primary-500);
+            outline-offset: 2px;
+        }
+
+        .summary-header:focus {
+            outline: 2px solid var(--color-primary-500);
+            outline-offset: -2px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Data Analysis Results</h1>
-
-        <!-- Download All Section -->
-        <div style="text-align: center; margin-bottom: 30px;">
-            <h2>Download All Data</h2>
-            <a href="{% url 'analyzer_app:download_all_plots' %}" class="download-button">Download All Plots (ZIP)</a>
-            <a href="{% url 'analyzer_app:download_data' 'original' %}" class="download-button">Download Original Data (CSV)</a>
-            <a href="{% url 'analyzer_app:download_data' 'processed' %}" class="download-button">Download Processed Data (CSV)</a>
+    <!-- Navigation -->
+    <nav class="navigation">
+        <div class="nav-container">
+            <a href="{% url 'analyzer_app:upload_file' %}" class="nav-logo">DataCore Analytics</a>
+            <a href="{% url 'analyzer_app:upload_file' %}" class="nav-cta">
+                <svg class="back-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                New Analysis
+            </a>
         </div>
+    </nav>
 
+    <div class="main-content">
+        <!-- Dashboard Header -->
+        <header class="dashboard-header">
+            <div class="dashboard-container">
+                <h1 class="dashboard-title">Analysis Results</h1>
+                <div class="action-bar">
+                    <a href="{% url 'analyzer_app:download_all_plots' %}" class="download-button">
+                        <svg class="download-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Download All Plots (ZIP)
+                    </a>
+                    <a href="{% url 'analyzer_app:download_data' 'original' %}" class="download-button">
+                        <svg class="download-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Download Original Data (CSV)
+                    </a>
+                    <a href="{% url 'analyzer_app:download_data' 'processed' %}" class="download-button">
+                        <svg class="download-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Download Processed Data (CSV)
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Email Alert -->
         {% if email_sent_message %}
-            <p style="text-align: center; color: green;">{{ email_sent_message }}</p>
-        {% endif %}
-
-        {% if summaries %}
-            <div class="summary-container">
-                <h3 onclick="toggleSummary('initial-summary')">Initial Data Summary (Click to expand)</h3>
-                <div id="initial-summary" class="summary-content">
-                    <h4>Data Info</h4>
-                    <pre>{{ summaries.initial.data_info }}</pre>
-                    <h4>Missing Values</h4>
-                    <div>{{ summaries.initial.missing_values|safe }}</div>
-                    <h4>Descriptive Statistics</h4>
-                    <div>{{ summaries.initial.descriptive_statistics|safe }}</div>
-                    <div style="text-align: center; margin-top: 15px;">
-                        <a href="{% url 'analyzer_app:download_summary' 'initial' %}" class="download-button">Download Initial Summary</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="summary-container">
-                <h3 onclick="toggleSummary('final-summary')">Final Data Summary (After Cleaning) (Click to expand)</h3>
-                <div id="final-summary" class="summary-content">
-                    <h4>Data Info</h4>
-                    <pre>{{ summaries.final.data_info }}</pre>
-                    <h4>Missing Values</h4>
-                    <div>{{ summaries.final.missing_values|safe }}</div>
-                    <h4>Descriptive Statistics</h4>
-                    <div>{{ summaries.final.descriptive_statistics|safe }}</div>
-                    <div style="text-align: center; margin-top: 15px;">
-                        <a href="{% url 'analyzer_app:download_summary' 'final' %}" class="download-button">Download Final Summary</a>
-                    </div>
-                </div>
+            <div class="email-alert">
+                <strong>Success:</strong> {{ email_sent_message }}
             </div>
         {% endif %}
 
-        {% if plots %}
-            <h2>Visualizations</h2>
-            {% for plot in plots %}
-                <div class="plot-container">
-                    <h2>{{ plot.title }}</h2>
-                    <img src="data:image/png;base64,{{ plot.image }}" alt="{{ plot.title }}">
-                    <div style="margin-top: 15px;">
-                        <a href="{% url 'analyzer_app:download_plot' forloop.counter0 %}" class="download-button">Download Plot</a>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No plots generated. Please check your file and try again.</p>
-        {% endif %}
+        <!-- Content Sections -->
+        <main>
 
-        <a href="{% url 'analyzer_app:upload_file' %}" class="back-link">Upload another file</a>
+            <!-- Summary Sections -->
+            {% if summaries %}
+                <section class="content-section">
+                    <div class="summary-container" data-summary="initial">
+                        <div class="summary-header" tabindex="0" role="button" aria-expanded="false">
+                            <h3 class="summary-title">Initial Data Summary</h3>
+                            <svg class="summary-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-section">
+                                <h4>Data Info</h4>
+                                <pre>{{ summaries.initial.data_info }}</pre>
+                            </div>
+                            <div class="summary-section">
+                                <h4>Missing Values</h4>
+                                <div>{{ summaries.initial.missing_values|safe }}</div>
+                            </div>
+                            <div class="summary-section">
+                                <h4>Descriptive Statistics</h4>
+                                <div>{{ summaries.initial.descriptive_statistics|safe }}</div>
+                            </div>
+                            <div class="plot-download">
+                                <a href="{% url 'analyzer_app:download_summary' 'initial' %}" class="download-button">
+                                    <svg class="download-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                    </svg>
+                                    Download Summary
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-container" data-summary="final">
+                        <div class="summary-header" tabindex="0" role="button" aria-expanded="false">
+                            <h3 class="summary-title">Final Data Summary (After Cleaning)</h3>
+                            <svg class="summary-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-section">
+                                <h4>Data Info</h4>
+                                <pre>{{ summaries.final.data_info }}</pre>
+                            </div>
+                            <div class="summary-section">
+                                <h4>Missing Values</h4>
+                                <div>{{ summaries.final.missing_values|safe }}</div>
+                            </div>
+                            <div class="summary-section">
+                                <h4>Descriptive Statistics</h4>
+                                <div>{{ summaries.final.descriptive_statistics|safe }}</div>
+                            </div>
+                            <div class="plot-download">
+                                <a href="{% url 'analyzer_app:download_summary' 'final' %}" class="download-button">
+                                    <svg class="download-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                    </svg>
+                                    Download Summary
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            {% endif %}
+
+            <!-- Visualizations Section -->
+            {% if plots %}
+                <section class="content-section visualizations-section">
+                    <h2 class="visualizations-title">Visualizations</h2>
+                    <div class="visualizations-grid">
+                        {% for plot in plots %}
+                            <div class="plot-container">
+                                <h3 class="plot-title">{{ plot.title }}</h3>
+                                <div class="plot-image-container">
+                                    <img src="data:image/png;base64,{{ plot.image }}" alt="{{ plot.title }}" class="plot-image">
+                                </div>
+                                <div class="plot-download">
+                                    <a href="{% url 'analyzer_app:download_plot' forloop.counter0 %}" class="download-button">
+                                        <svg class="download-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                        </svg>
+                                        Download Plot
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% else %}
+                <div class="empty-state">
+                    <p>No plots generated. Please check your file and try again.</p>
+                </div>
+            {% endif %}
+        </main>
+
+        <!-- Back Section -->
+        <section class="back-section">
+            <a href="{% url 'analyzer_app:upload_file' %}" class="back-link">
+                <svg class="back-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Upload Another File
+            </a>
+        </section>
     </div>
 
     <script>
-        function toggleSummary(id) {
-            var content = document.getElementById(id);
-            if (content.style.display === "none") {
-                content.style.display = "block";
+        // Accordion functionality for summary sections
+        document.querySelectorAll('.summary-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const container = header.parentElement;
+                const content = header.nextElementSibling;
+                const isExpanded = container.classList.contains('expanded');
+                
+                // Toggle the expanded state
+                container.classList.toggle('expanded');
+                content.classList.toggle('expanded');
+                
+                // Update ARIA attributes
+                header.setAttribute('aria-expanded', !isExpanded);
+                
+                // Animate the transition
+                if (!isExpanded) {
+                    // Expanding
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                } else {
+                    // Collapsing
+                    content.style.maxHeight = '0';
+                }
+            });
+            
+            // Keyboard support
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    header.click();
+                }
+            });
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.navigation');
+            const header = document.querySelector('.dashboard-header');
+            if (window.scrollY > 10) {
+                nav.style.boxShadow = 'var(--shadow-card)';
             } else {
-                content.style.display = "none";
+                nav.style.boxShadow = 'none';
             }
-        }
+            
+            // Add shadow to header when scrolled
+            if (window.scrollY > 100) {
+                header.style.boxShadow = 'var(--shadow-card)';
+            } else {
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe plot containers
+        document.querySelectorAll('.plot-container').forEach((plot, index) => {
+            plot.style.opacity = '0';
+            plot.style.transform = 'translateY(30px)';
+            plot.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+            observer.observe(plot);
+        });
+
+        // Observe summary containers
+        document.querySelectorAll('.summary-container').forEach((summary, index) => {
+            summary.style.opacity = '0';
+            summary.style.transform = 'translateY(20px)';
+            summary.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
+            observer.observe(summary);
+        });
+
+        // Add loading state for download buttons
+        document.querySelectorAll('.download-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Add a brief loading indicator
+                const originalText = this.innerHTML;
+                this.style.opacity = '0.7';
+                this.style.pointerEvents = 'none';
+                
+                setTimeout(() => {
+                    this.style.opacity = '1';
+                    this.style.pointerEvents = 'auto';
+                }, 500);
+            });
+        });
+
+        // Enhance table styling for better readability
+        document.querySelectorAll('.summary-content table').forEach(table => {
+            // Add zebra striping if not present
+            if (!table.querySelector('tbody')) {
+                const tbody = document.createElement('tbody');
+                while (table.firstChild) {
+                    tbody.appendChild(table.firstChild);
+                }
+                table.appendChild(tbody);
+            }
+        });
     </script>
 </body>
 </html>
